@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministry Orchestration - Network Hub</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --background: #F3F4F6;
+            --surface: rgba(255, 255, 255, 0.7);
+            --surface-solid: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: rgba(255, 255, 255, 0.5);
+            --input-border: #D1D5DB;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --focus-ring: rgba(79, 70, 229, 0.3);
+            --success-bg: #D1FAE5;
+            --success-text: #065F46;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #6366F1;
+                --primary-hover: #818CF8;
+                --background: #111827;
+                --surface: rgba(31, 41, 55, 0.7);
+                --surface-solid: #1F2937;
+                --text-main: #F9FAFB;
+                --text-muted: #9CA3AF;
+                --border: rgba(255, 255, 255, 0.1);
+                --input-border: #374151;
+                --input-bg: rgba(17, 24, 39, 0.8);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem 0;
+            min-height: 100vh;
+            background: var(--background);
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+            color: var(--text-main);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 2rem;
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header { text-align: center; margin-bottom: 2.5rem; }
+        h1 { margin: 0; font-size: 2.5rem; font-weight: 800; }
+        p.subtitle { margin: 0.5rem 0 0; color: var(--text-muted); font-size: 1rem; }
+        
+        .section-box {
+            background: var(--surface-solid);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        h2 { font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+        ul li {
+            padding: 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        ul li a.btn {
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .form-row { display: flex; gap: 1rem; align-items: flex-end; margin-top: 1.5rem; }
+        .form-group { flex: 1; }
+        input[type="text"] {
+            width: 100%; padding: 0.8rem 1rem; background: var(--input-bg);
+            border: 1px solid var(--input-border); border-radius: 10px; color: var(--text-main); font-size: 1rem; box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem;
+            border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;
+        }
+
+        .pairing-match {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .pairing-match strong { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Orchestration Hub</h1>
+            <p class="subtitle">Multi-Organization Network Overview</p>
+        </div>
+
+        <div class="section-box">
+            <h2>Network Nodes (Organizations)</h2>
+            <ul>
+                {{ organizations_list }}
+            </ul>
+            <form action="/" method="POST" class="form-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="create_org">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="New Organization Name" required>
+                </div>
+                <button type="submit">Add Node</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <h2>Pairing Engine</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Matches are automatically identified when one organization's Need category matches another organization's Capability category.</p>
+            {{ pairings_list }}
+        </div>
+    </div>
+</body>
+</html>

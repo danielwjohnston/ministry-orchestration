@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministry Orchestration MVP</title>
+    <style>
+        :root {
+            /* Colors */
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --background: #F3F4F6;
+            --surface: rgba(255, 255, 255, 0.7);
+            --surface-solid: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: rgba(255, 255, 255, 0.5);
+            --input-border: #D1D5DB;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --focus-ring: rgba(79, 70, 229, 0.3);
+            
+            --success-bg: #D1FAE5;
+            --success-text: #065F46;
+            --error-bg: #FEE2E2;
+            --error-text: #991B1B;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #6366F1;
+                --primary-hover: #818CF8;
+                --background: #111827;
+                --surface: rgba(31, 41, 55, 0.7);
+                --surface-solid: #1F2937;
+                --text-main: #F9FAFB;
+                --text-muted: #9CA3AF;
+                --border: rgba(255, 255, 255, 0.1);
+                --input-border: #374151;
+                --input-bg: rgba(17, 24, 39, 0.8);
+                
+                --success-bg: rgba(6, 95, 70, 0.2);
+                --success-text: #34D399;
+                --error-bg: rgba(153, 27, 27, 0.2);
+                --error-text: #F87171;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem 0;
+            min-height: 100vh;
+            background: var(--background);
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+            color: var(--text-main);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 2rem;
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 24px 48px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            margin: 0.5rem 0 0;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            animation: slideDown 0.4s ease-out forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: color 0.2s;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -2px rgba(79, 70, 229, 0.3);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        ul li {
+            padding: 0.75rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-box {
+            background: var(--surface-solid);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Orchestration Dashboard</h1>
+            <p class="subtitle">Mapping the Body's Gifts and Needs</p>
+            <a href="/" style="display:inline-block; margin-top:1rem; color:var(--primary); text-decoration:none; font-weight:600;">&larr; Back to Network Hub</a>
+        </div>
+        
+        {% if message %}
+        <div class="message {{ message_type }}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <div class="section-box">
+            <h2>Organization Identity</h2>
+            <form action="/" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="update_org">
+                <input type="hidden" name="org_id" value="{{ org['id'] }}">
+                
+                <div class="form-group">
+                    <label for="name">Organization Name</label>
+                    <input type="text" id="name" name="name" value="{{ org['name'] }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Primary Address</label>
+                    <textarea id="address" name="address" rows="2">{{ org['address'] or '' }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="primary_contact">Primary Contact</label>
+                    <input type="text" id="primary_contact" name="primary_contact" value="{{ org['primary_contact'] or '' }}">
+                </div>
+                <button type="submit">Update Identity</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <h2>Active Ministries</h2>
+            <ul>
+                {{ ministries_list }}
+            </ul>
+            <form action="/" method="POST" class="form-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="add_ministry">
+                <input type="hidden" name="org_id" value="{{ org['id'] }}">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Ministry Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="description" placeholder="Description">
+                </div>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <h2>Capabilities & Gifts</h2>
+            <ul>
+                {{ capabilities_list }}
+            </ul>
+            <form action="/" method="POST" class="form-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="add_capability">
+                <input type="hidden" name="org_id" value="{{ org['id'] }}">
+                <div class="form-group">
+                    <input type="text" name="category" placeholder="Capability (e.g. Graphic Design)" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="description" placeholder="Details">
+                </div>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <h2>Current Needs</h2>
+            <ul>
+                {{ needs_list }}
+            </ul>
+            <form action="/" method="POST" class="form-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="add_need">
+                <input type="hidden" name="org_id" value="{{ org['id'] }}">
+                <div class="form-group">
+                    <input type="text" name="category" placeholder="Need (e.g. Volunteers, Chairs)" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="description" placeholder="Details">
+                </div>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
